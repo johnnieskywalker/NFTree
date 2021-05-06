@@ -1,5 +1,4 @@
 import { ethers } from "hardhat";
-// import { l2ethers } from "hardhat";
 import chai from "chai";
 import { solidity } from "ethereum-waffle";
 
@@ -29,12 +28,6 @@ describe("Root", () => {
       gasLimit: 8999999,                     // same as above
     })) as Root;
 
-    // myContract = await YourContract.deploy({
-      // gasPrice: ethers.BigNumber.from('0'),
-      // gasLimit: 8999999,
-    // });
-
-
     await root.deployed();
     const rootCount = await root.getRootCount();
 
@@ -53,17 +46,13 @@ describe("Root", () => {
  	
   describe("mintRoot", async () => {
     it("should mint new root", async () => {
-      const testHash = "asasdasdas121212120x1"
+      const testHash = "asasdasdas121212120x"
       await root.mintRoot(testHash);
       await delay(100);
 
       const rootId = await root.hashes(testHash);
-      // await delay(100);
       const rootCount = await root.getRootCount();
-      // await delay(100);
       const ownerRoots = await root.getRootsByOwner(signer.address);
-      // await delay(100);
-      // const nodeOwner = await root.getNodeOwner(rootId);
       const rootNodeOwner = await root.getNodeOwner(rootId);
 
       expect(rootId).to.eq(1);
@@ -79,15 +68,15 @@ describe("Root", () => {
      * but at least it fails it the same way optimism examples are failing that test revert - so it's not bad ;)
      */
     it("should fail when minting new root with old hash", async () => {
-      const testHash = "asasdasdas121212120x"
+      const testHash = "asasdasdas12121210x"
       await root.mintRoot(testHash);
       await delay(100);
       await expect(root.mintRoot(testHash)).to.be.revertedWith("VM Exception while processing transaction: revert Can not use the same hash");
     });
 
     it("should mint new node", async () => {
-      const testHashRoot = "asdf1234";
-      const testHashNodeOne = "XXX11";
+      const testHashRoot = "asdf123";
+      const testHashNodeOne = "XXX1";
 
       await root.mintRoot(testHashRoot);
       await delay(100);
@@ -109,11 +98,11 @@ describe("Root", () => {
     });
 
     it("should mint new tree", async () => {
-      const testHashRoot = "asdf1231";
-      const testHashNodeOne = "XXX11";
-      const testHashNodeTwo = "XXX21";
-      const testHashNodeThree = "XXX31";
-      const testHashNodeFour = "XXX41";
+      const testHashRoot = "asdf123";
+      const testHashNodeOne = "XXX1";
+      const testHashNodeTwo = "XXX2";
+      const testHashNodeThree = "XXX3";
+      const testHashNodeFour = "XXX4";
 
       await root.mintRoot(testHashRoot);
       await delay(100);
