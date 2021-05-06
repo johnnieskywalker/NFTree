@@ -1,8 +1,11 @@
 # dependencies
 /node_modules
 /typechain
+/typechain-ovm
 /artifacts
+/artifacts-ovm
 /cache
+/cache-ovm
 /.pnp
 .pnp.js
 # testing
