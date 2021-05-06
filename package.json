@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "patch-package --patch-dir node_modules/@thesatoshicompany/optimism-openzeppelin-compat/patches"
   },
   "author": "gwalen",
   "license": "ISC",
@@ -28,7 +29,10 @@
   "dependencies": {
     "@eth-optimism/hardhat-ovm": "^0.1.0",
     "@openzeppelin/contracts": "^3.4.1",
+    "@thesatoshicompany/optimism-openzeppelin-compat": "^1.0.3",
     "chai-arrays": "^2.2.0",
+    "delay": "^5.0.0",
+    "patch-package": "^6.4.7",
     "solc": "^0.7.3"
   }
 }
