@@ -735,6 +735,13 @@
   dependencies:
     defer-to-connect "^1.0.1"
 
+"@thesatoshicompany/optimism-openzeppelin-compat@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@thesatoshicompany/optimism-openzeppelin-compat/-/optimism-openzeppelin-compat-1.0.3.tgz#6518513910ad0bcff4d708f04de536f4fbe6b040"
+  integrity sha512-mSMUoVGGPhxLRm+crFayeW3peBZLmYJZIkA3q24TUaCKmn5NSQpPPoJl2wbgpim5YSJ8hIYUL2Zv8zYFHVq/og==
+  dependencies:
+    patch-package "^6.4.7"
+
 "@typechain/ethers-v5@^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@typechain/ethers-v5/-/ethers-v5-2.0.0.tgz#cd3ca1590240d587ca301f4c029b67bfccd08810"
@@ -2683,6 +2690,11 @@ defined@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/defined/-/defined-1.0.0.tgz#c98d9bcef75674188e110969151199e39b1fa693"
   integrity sha1-yY2bzvdWdBiOEQlpFRGZ45sfppM=
+
+delay@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/delay/-/delay-5.0.0.tgz#137045ef1b96e5071060dd5be60bf9334436bd1d"
+  integrity sha512-ReEBKkIfe4ya47wlPYf/gu5ib6yUG0/Aez0JQZQz94kiWtRQvZIQbTiehsnwHvLSWJnQdhVeqYue7Id1dKr0qw==
 
 delayed-stream@~1.0.0:
   version "1.0.0"
@@ -6012,7 +6024,7 @@ patch-package@6.2.2:
     slash "^2.0.0"
     tmp "^0.0.33"
 
-patch-package@^6.2.2:
+patch-package@^6.2.2, patch-package@^6.4.7:
   version "6.4.7"
   resolved "https://registry.yarnpkg.com/patch-package/-/patch-package-6.4.7.tgz#2282d53c397909a0d9ef92dae3fdeb558382b148"
   integrity sha512-S0vh/ZEafZ17hbhgqdnpunKDfzHQibQizx9g8yEf5dcVk3KOflOfdufRXQX8CSEkyOQwuM/bNz1GwKvFj54kaQ==
