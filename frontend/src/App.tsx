@@ -16,6 +16,7 @@ function App() {
   return (
 
     <div className="App">
+      <button>Connect wallet</button>
      <form>
       <label>
         Root hash
@@ -40,8 +41,9 @@ function App() {
            <input type="text" name="node4hash"/>
         </label>
         <br></br>
-      <input type="submit" value="Mint NFTree" />
+        <input type="submit" value="Mint NFTree on L2" />
       </form>
+      <button>Send to Ethereum</button>
     </div>
   );
 }

@@ -14,7 +14,9 @@
          compilers: [{ version: "0.7.3", settings: {} }],
        },
      networks: {
-       hardhat: {},
+       hardhat: {
+        chainId: 1337
+       },
        optimism: {
         url: 'http://127.0.0.1:8545',
         accounts: {
