@@ -1,5 +1,7 @@
 import { ethers } from "hardhat";
-import {Root} from "../typechain/Root"
+import { Root } from "../typechain/Root";
+import { existsSync, mkdirSync, writeFileSync } from 'fs';
+import { Contract } from "@ethersproject/contracts";
 
 async function main() {
   const factory = await ethers.getContractFactory("Root");
@@ -10,6 +12,18 @@ async function main() {
   console.log("Deployment transaction hash: ", contract.deployTransaction.hash);
   // The contract is NOT deployed yet; we must wait until it is mined
   await contract.deployed();
+}
+
+function generateFrontendFiles(contract : Contract) {
+  const contractsDirectory = "/../frontend/src/contracts";
+
+  if (!existsSync(contractsDirectory)) {
+    mkdirSync(contractsDirectory);
+  }
+
+  writeFileSync(contractsDirectory + "contract-address.json", JSON.stringify({ "Root": contract.address }, undefined, 2));
+
+  // TODO: JOH add making ABI for frontend like in https://github.com/nomiclabs/hardhat-hackathon-boilerplate/blob/master/scripts/deploy.js
 }
 
 main()
