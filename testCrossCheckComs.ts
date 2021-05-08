@@ -55,7 +55,9 @@ async function main() {
   // const contractFactory = await ethers.getContractFactory("Root", signer);
 
   console.log("Deploy L1Root");
-  const l1Root = await factoryL1Root.connect(l1Wallet).deploy();
+  const l1Root = await factoryL1Root.connect(l1Wallet).deploy({
+    gasPrice: 0
+  });
   await l1Root.deployTransaction.wait();
 
   console.log("Deploy L2Root");
@@ -67,7 +69,9 @@ async function main() {
   await l2Root.deployTransaction.wait();
 
   console.log("Call mint from L2 -> L1");
-  const txMint = await l2Root.testCrossChainMint(l1Wallet.address);
+  const txMint = await l2Root.testCrossChainMint(l1Wallet.address, {
+    gasPrice: 0
+  });
   await txMint.wait();
 
   // Wait for the message to be relayed to L1
@@ -76,7 +80,7 @@ async function main() {
   await watcher.getL1TransactionReceipt(msgHash1)
 
   console.log("Check if L1 was successfully called")
-  const wasMintTreeCalled = await l1Root.getWasMintTreeCalled();
+  const wasMintTreeCalled = await l1Root.wasMintTreeCalled();
   console.log("Was L1 called = ", wasMintTreeCalled);
 
 }  
