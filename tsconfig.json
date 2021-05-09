@@ -5,7 +5,9 @@
     "esModuleInterop": true,
     "outDir": "dist",
     "resolveJsonModule": true,
-    "types": ["node"]
+    "types": ["node"],
+    // for debugging only
+    "sourceMap": true
   },
   "include": [
     "./scripts",
