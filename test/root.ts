@@ -2,7 +2,7 @@ import { ethers } from "hardhat";
 import chai from "chai";
 import { solidity } from "ethereum-waffle";
 
-import {Root} from "../typechain/Root"
+import {Root} from "../typechain-ovm/Root"
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 import delay = require("delay");
@@ -28,7 +28,7 @@ describe("Root", () => {
       gasLimit: 8999999,                     // same as above
     })) as Root;
 
-    await root.deployed();
+    await root.deployTransaction.wait();
     const rootCount = await root.getRootCount();
 
     expect(rootCount).to.eq(0);
@@ -47,8 +47,8 @@ describe("Root", () => {
   describe("mintRoot", async () => {
     it("should mint new root", async () => {
       const testHash = "asasdasdas121212120x"
-      await root.mintRoot(testHash);
-      await delay(100);
+      const tx = await root.mintRoot(testHash);
+      await tx.wait()
 
       const rootId = await root.hashes(testHash);
       const rootCount = await root.getRootCount();
@@ -69,20 +69,22 @@ describe("Root", () => {
      */
     it("should fail when minting new root with old hash", async () => {
       const testHash = "asasdasdas12121210x"
-      await root.mintRoot(testHash);
-      await delay(100);
-      await expect(root.mintRoot(testHash)).to.be.revertedWith("VM Exception while processing transaction: revert Can not use the same hash");
+      const tx1 = await root.mintRoot(testHash);
+      await tx1.wait()
+      
+      const tx2 = root.mintRoot(testHash, { gasLimit: 8999999 })
+      await expect(tx2).to.be.revertedWith("VM Exception while processing transaction: revert Can not use the same hash");
     });
 
     it("should mint new node", async () => {
       const testHashRoot = "asdf123";
       const testHashNodeOne = "XXX1";
 
-      await root.mintRoot(testHashRoot);
-      await delay(100);
+      const tx1 = await root.mintRoot(testHashRoot);
+      await tx1.wait()
       const rootId = await root.hashes(testHashRoot);   // switch to getNodeIdForHash, and make hashes private
-      await root.mintNode(testHashNodeOne, rootId);
-      await delay(100);
+      const tx2 = await root.mintNode(testHashNodeOne, rootId);
+      await tx2.wait()
 
       const nodeOneId = await root.hashes(testHashNodeOne);
       const rootOwner = await root.getNodeOwner(nodeOneId);
@@ -104,21 +106,21 @@ describe("Root", () => {
       const testHashNodeThree = "XXX3";
       const testHashNodeFour = "XXX4";
 
-      await root.mintRoot(testHashRoot);
-      await delay(100);
+      const tx = await root.mintRoot(testHashRoot);
+      await tx.wait()
       const rootId = await root.getNodeIdForHash(testHashRoot);
 
-      await root.mintNode(testHashNodeOne, rootId);
-      await delay(100);
+      const tx1 = await root.mintNode(testHashNodeOne, rootId);
+      await tx1.wait()
       const nodeOneId = await root.getNodeIdForHash(testHashNodeOne);  
-      await root.mintNode(testHashNodeTwo, rootId);
-      await delay(100);
+      const tx2 = await root.mintNode(testHashNodeTwo, rootId);
+      await tx2.wait()
       const nodeTwoId = await root.getNodeIdForHash(testHashNodeTwo);  
-      await root.mintNode(testHashNodeThree, nodeOneId);
-      await delay(100);
+      const tx3 = await root.mintNode(testHashNodeThree, nodeOneId);
+      await tx3.wait()
       const nodeThreeId = await root.getNodeIdForHash(testHashNodeThree);  
-      await root.mintNode(testHashNodeFour, nodeThreeId);
-      await delay(100);
+      const tx4 = await root.mintNode(testHashNodeFour, nodeThreeId);
+      await tx4.wait()
       const nodeFourId = await root.getNodeIdForHash(testHashNodeFour);  
 
       const rootDescendants = await root.getDescendants(rootId);
