@@ -71,7 +71,7 @@ describe("Root", () => {
       const testHash = "asasdasdas12121210x"
       await root.mintRoot(testHash);
       await delay(100);
-      await expect(root.mintRoot(testHash)).to.be.revertedWith("VM Exception while processing transaction: revert Can not use the same hash");
+      await expect(root.mintRoot(testHash, {gasLimit: 8999999})).to.be.revertedWith("VM Exception while processing transaction: revert Can not use the same hash");
     });
 
     it("should mint new node", async () => {
