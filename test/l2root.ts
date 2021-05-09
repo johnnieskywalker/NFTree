@@ -3,7 +3,7 @@ import chai from "chai";
 import { solidity } from "ethereum-waffle";
 
 // import {Root} from "../typechain-ovm/Root"
-import {L1Root as Root} from "../typechain/L1Root"
+import {L2Root as Root} from "../typechain/L2Root"
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 import delay = require("delay");
@@ -14,10 +14,10 @@ import delay = require("delay");
 chai.use(solidity);     //TODO: ask Johnny how it works
 const {expect} = chai;  //TODO: ask Johnny how it works
 
-const contractName = "L1Root";
+const contractName = "L2Root";
 
 
-describe("L1Root", () => {
+describe("L2Root", () => {
   let root: Root;
   let signer: SignerWithAddress
 

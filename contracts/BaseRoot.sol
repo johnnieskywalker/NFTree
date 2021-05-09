@@ -19,8 +19,7 @@ abstract contract BaseRoot is ERC721 {
   // unique nft hashes to nodeId map
   mapping(string => uint256) public hashes;
 
-  constructor () ERC721("Root", "RT") {}
-
+  // constructor () ERC721("Root", "RT") {}
 
   function mintRoot(string calldata hash, address owner) public returns (uint256) {
     require(hashes[hash] != 1, "Can not use the same hash (Root check)");
