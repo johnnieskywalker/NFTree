@@ -4,6 +4,7 @@ import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { Contract } from "@ethersproject/contracts";
 // how to properly use hre want to use readArtifactSync in TS :/
 // import { HardhatRuntimeEnvironment } from "hardhat/types";
+// FIX Should use  import { Artifacts } from "hardhat/types"; etc...
 const hre = require("hardhat");
 
 async function main() {
