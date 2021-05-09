@@ -2,7 +2,9 @@ import { ethers } from "hardhat";
 import chai from "chai";
 import { solidity } from "ethereum-waffle";
 
-import {Root} from "../typechain-ovm/Root"
+// import {L2Root as Root} from "../typechain-ovm/L2Root"
+// import {L1Root as Root} from "../typechain/L1Root"
+import {L1Root } from "../typechain/L1Root"
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 import delay = require("delay");
@@ -14,19 +16,19 @@ chai.use(solidity);     //TODO: ask Johnny how it works
 const {expect} = chai;  //TODO: ask Johnny how it works
 
 
-describe("Root", () => {
-  let root: Root;
+describe("L1Root", () => {
+  let root: L1Root;
   let signer: SignerWithAddress
 
   beforeEach(async () => {
     const signers = await ethers.getSigners();    
     signer = signers[0];
-    const contractFactory = await ethers.getContractFactory("Root", signer);
+    const contractFactory = await ethers.getContractFactory("L1Root", signer);
 
     root = (await contractFactory.deploy({
       gasPrice: ethers.BigNumber.from('0'),  // TODO : not sure if necessary but was used in on other L2 example
       gasLimit: 8999999,                     // same as above
-    })) as Root;
+    })) as L1Root;
 
     await root.deployTransaction.wait();
     const rootCount = await root.getRootCount();
@@ -83,7 +85,9 @@ describe("Root", () => {
       const tx1 = await root.mintRoot(testHashRoot);
       await tx1.wait()
       const rootId = await root.hashes(testHashRoot);   // switch to getNodeIdForHash, and make hashes private
-      const tx2 = await root.mintNode(testHashNodeOne, rootId);
+      // const tx2 = await root.mintNode(testHashNodeOne, 1111);
+      const tx2 = await root.mintMyHead(testHashNodeOne, rootId);
+      // const tx2 = await root.mintNode(testHashNodeOne, rootId);
       await tx2.wait()
 
       const nodeOneId = await root.hashes(testHashNodeOne);
@@ -99,6 +103,8 @@ describe("Root", () => {
       expect(rootDescendants[0]).to.eq(nodeOneId);
     });
 
+    /*
+
     it("should mint new tree", async () => {
       const testHashRoot = "asdf123";
       const testHashNodeOne = "XXX1";
@@ -110,15 +116,19 @@ describe("Root", () => {
       await tx.wait()
       const rootId = await root.getNodeIdForHash(testHashRoot);
 
+      // const tx1 = await root.mintNode(testHashNodeOne, rootId, rootId);
       const tx1 = await root.mintNode(testHashNodeOne, rootId);
       await tx1.wait()
       const nodeOneId = await root.getNodeIdForHash(testHashNodeOne);  
+      // const tx2 = await root.mintNode(testHashNodeTwo, rootId, rootId);
       const tx2 = await root.mintNode(testHashNodeTwo, rootId);
       await tx2.wait()
       const nodeTwoId = await root.getNodeIdForHash(testHashNodeTwo);  
+      // const tx3 = await root.mintNode(testHashNodeThree, nodeOneId, rootId);
       const tx3 = await root.mintNode(testHashNodeThree, nodeOneId);
       await tx3.wait()
       const nodeThreeId = await root.getNodeIdForHash(testHashNodeThree);  
+      // const tx4 = await root.mintNode(testHashNodeFour, nodeThreeId, rootId);
       const tx4 = await root.mintNode(testHashNodeFour, nodeThreeId);
       await tx4.wait()
       const nodeFourId = await root.getNodeIdForHash(testHashNodeFour);  
@@ -149,7 +159,9 @@ describe("Root", () => {
        *   /
        *  4
        */
-    });
+    // });
+
+  
 
 
     //TODO: test for many owners (users)

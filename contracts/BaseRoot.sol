@@ -12,6 +12,8 @@ abstract contract BaseRoot is ERC721 {
   // represnts a map of roots for feach owner, one onwer can have many roots
   mapping (address => uint256[]) private rootsByOwner;
   uint256[] private roots;
+  // all nodes in the tree for given root (including root)
+  mapping (uint256 => uint256[]) private nodesInTreeByRoot;
   // used to store owners for nodes - only owner can attach a new node to one of nodes of his tree
   mapping (uint256 => address) private nodeOwner;
   // represents a map node adjacents; root is also a node; each treee strarts with root and is DAG
@@ -22,12 +24,14 @@ abstract contract BaseRoot is ERC721 {
   constructor () ERC721("Root", "RT") {}
 
 
-  function mintRoot(string calldata hash, address owner) public returns (uint256) {
+  // function mintRoot(string memory hash, address owner) public returns (uint256) {
+  function mintRootInternal(string memory hash, address owner) internal returns (uint256) {
     require(hashes[hash] != 1, "Can not use the same hash (Root check)");
 
     nodesIds.increment();
     uint256 newRootId = nodesIds.current();
     hashes[hash] = newRootId;
+    // nodesInTreeByRoot[newRootId].push(newRootId);
 
     roots.push(newRootId);
     rootsByOwner[msg.sender].push(newRootId);
@@ -42,16 +46,19 @@ abstract contract BaseRoot is ERC721 {
   }
 
   //TODO: can I use calldata for hahsh (as it is immutable) but I need to save it ?
-  function mintRoot(string calldata hash) public returns (uint256) {
-    mintRoot(hash, msg.sender);
+  function mintRootInternal(string calldata hash) internal returns (uint256) {
+    mintRootInternal(hash, msg.sender);
   }
 
-  function mintNode(string calldata hash, uint256 ancestorNodeId) public returns(uint256) {
+  // function mintNode(string memory hash, uint256 ancestorNodeId, uint rootId) public returns(uint256) {
+  function mintNodeInternal(string memory hash, uint256 ancestorNodeId) internal returns(uint256) {
     require(hashes[hash] != 1, "Can not use the same hash (Node check)");    
 
     nodesIds.increment();
     uint256 newNodeId = nodesIds.current();
     hashes[hash] = newNodeId;
+    // console.log(rootId);
+    // nodesInTreeByRoot[rootId].push(newNodeId);
 
     nodeOwner[newNodeId] = msg.sender;
     tree[ancestorNodeId].push(newNodeId);
