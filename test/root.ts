@@ -40,6 +40,7 @@ describe("L1Root", () => {
   describe("verify deployment", async () => {
     it("should correctly read simple contract params", async () => {
       const rootCount = await root.getRootCount();
+
       expect(rootCount).to.eq(0);
       expect(root.address).to.properAddress;
     });
