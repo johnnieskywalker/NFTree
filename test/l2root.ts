@@ -3,7 +3,7 @@ import chai from "chai";
 import { solidity } from "ethereum-waffle";
 
 // import {Root} from "../typechain-ovm/Root"
-import {L2Root as Root} from "../typechain/L2Root"
+import {L2Root as Root} from "../typechain-ovm/L2Root"
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 import delay = require("delay");
@@ -21,15 +21,24 @@ describe("L2Root", () => {
   let root: Root;
   let signer: SignerWithAddress
 
+  const l2MessengerAddress = '0x4200000000000000000000000000000000000007';
+  const dummyL1MinterAddress = '0x4200000000000000000000000000000000000666';
+
+
+
   beforeEach(async () => {
     const signers = await ethers.getSigners();    
     signer = signers[0];
     const contractFactory = await ethers.getContractFactory(contractName, signer);
 
-    root = (await contractFactory.deploy({
-      gasPrice: ethers.BigNumber.from('0'),  // TODO : not sure if necessary but was used in on other L2 example
-      gasLimit: 8999999,                     // same as above
-    })) as Root;
+    root = (await contractFactory.deploy(
+      dummyL1MinterAddress,
+      l2MessengerAddress,
+      {
+        gasPrice: ethers.BigNumber.from('0'),  // TODO : not sure if necessary but was used in on other L2 example
+        gasLimit: 8999999,                     // same as above
+      }
+    )) as Root;
 
     await root.deployTransaction.wait();
     const rootCount = await root.getRootCount();
