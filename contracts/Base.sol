@@ -2,8 +2,9 @@ pragma solidity >=0.6.0 <0.8.0;
 import "hardhat/console.sol";
 
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-abstract contract Base {
+abstract contract Base is ERC721 {
 
   using Counters for Counters.Counter;
   Counters.Counter private nodesIds;

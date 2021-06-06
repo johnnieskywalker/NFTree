@@ -51,7 +51,7 @@ describe("Concrete", () => {
     });
   });
 
-  describe("verify Base class methods", async () => {
+  describe("verify inherited class methods", async () => {
     it("should read root count", async () => {
       const rootCount = await concrete.getRootsCount();
       expect(rootCount).to.eq(0);
@@ -66,7 +66,10 @@ describe("Concrete", () => {
       expect(hashValue).to.eq(1);
     });
 
-
+    it("should read ERC721 name", async () => {
+      const erc721Name = await concrete.name();
+      expect(erc721Name).to.eq("Root");
+    });
 
   });
 
