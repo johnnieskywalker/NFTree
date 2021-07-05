@@ -50,7 +50,7 @@ describe("L1Root", () => {
   describe("mintRoot", async () => {
     it("should mint new root", async () => {
       const testHash = "asasdasdas121212120x"
-      const tx = await root.mintRoot(testHash);
+      const tx = await root.mintRootWithHash(testHash);
       await tx.wait()
 
       const rootId = await root.hashes(testHash);
@@ -72,10 +72,10 @@ describe("L1Root", () => {
      */
     it("should fail when minting new root with old hash", async () => {
       const testHash = "asasdasdas12121210x"
-      const tx1 = await root.mintRoot(testHash);
+      const tx1 = await root.mintRootWithHash(testHash);
       await tx1.wait()
       
-      const tx2 = root.mintRoot(testHash, { gasLimit: 8999999 })
+      const tx2 = root.mintRootWithHash(testHash, { gasLimit: 8999999 })
       await expect(tx2).to.be.revertedWith("VM Exception while processing transaction: revert Can not use the same hash");
     });
 
@@ -83,12 +83,11 @@ describe("L1Root", () => {
       const testHashRoot = "asdf123";
       const testHashNodeOne = "XXX1";
 
-      const tx1 = await root.mintRoot(testHashRoot);
+      const tx1 = await root.mintRootWithHash(testHashRoot);
       await tx1.wait()
       const rootId = await root.hashes(testHashRoot);   // switch to getNodeIdForHash, and make hashes private
       // const tx2 = await root.mintNode(testHashNodeOne, 1111);
-      const tx2 = await root.mintMyHead(testHashNodeOne, rootId);
-      // const tx2 = await root.mintNode(testHashNodeOne, rootId);
+      const tx2 = await root.mintNode(testHashNodeOne, rootId);
       await tx2.wait()
 
       const nodeOneId = await root.hashes(testHashNodeOne);
