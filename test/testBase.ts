@@ -21,7 +21,8 @@ describe("Concrete", () => {
     const contractFactory = await ethers.getContractFactory(contractName, signer);
 
     concrete = (await contractFactory.deploy(
-      0, 
+      0,
+      signer.address,  // any address will fit this is dummy test 
       { gasLimit: 8999999 }                     // same as above
     )) as Concrete;
 
@@ -57,8 +58,8 @@ describe("Concrete", () => {
       expect(rootCount).to.eq(0);
     });
 
-    it("should add root", async () => {
-      const tx1 = await concrete.mintRoot("0x1", signer.address);
+    it("should mint root", async () => {
+      const tx1 = await concrete.mintRootWithHash("0x1");
       await tx1.wait();
       const rootCount = await concrete.getRootsCount();
       const hashValue = await concrete.readHashValue("0x1");

@@ -13,10 +13,23 @@ abstract contract Base is ERC721 {
   // unique nft hashes to nodeId map
   mapping(string => uint256) public hashes;
 
+  address private ownerAddr;
+
   // constructor () ERC721("Root", "RT") {}
+
+  /*** PUZZLE SOLVED ****
+  TypeChain which is building TS api for contract is not correctly handling function overloads 
+  so having two functions with the same name but different params will cause that TypeChain will not create api function for any of them
+  *********/
+
+  function mintRootWithHash(string calldata hash) public returns (uint256) {
+    mintRoot(hash, msg.sender);
+  }
 
   function mintRoot(string calldata hash, address owner) public returns (uint256) {
     require(hashes[hash] != 1, "Can not use the same hash (Root check)");
+
+    ownerAddr = owner;
 
     nodesIds.increment();
     uint256 newRootId = nodesIds.current();

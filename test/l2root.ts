@@ -3,7 +3,8 @@ import chai from "chai";
 import { solidity } from "ethereum-waffle";
 
 // import {Root} from "../typechain-ovm/Root"
-import {L2Root as Root} from "../typechain-ovm/L2Root"
+// import {L2Root as Root} from "../typechain-ovm/L2Root"
+import {L2Root as Root} from "../typechain/L2Root"
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 import delay = require("delay");
