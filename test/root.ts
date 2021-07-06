@@ -103,16 +103,14 @@ describe("L1Root", () => {
       expect(rootDescendants[0]).to.eq(nodeOneId);
     });
 
-    /*
-
-    it("should mint new tree", async () => {
+    it("should mint new tree manually", async () => {
       const testHashRoot = "asdf123";
       const testHashNodeOne = "XXX1";
       const testHashNodeTwo = "XXX2";
       const testHashNodeThree = "XXX3";
       const testHashNodeFour = "XXX4";
 
-      const tx = await root.mintRoot(testHashRoot);
+      const tx = await root.mintRootWithHash(testHashRoot);
       await tx.wait()
       const rootId = await root.getNodeIdForHash(testHashRoot);
 
@@ -159,10 +157,65 @@ describe("L1Root", () => {
        *   /
        *  4
        */
-    // });
+    });
 
-  
+    it("should mint new tree with mintTree() function", async () => {
 
+      const hashRoot = "root1";
+      const hashNodeOne = "node1";
+      const hashNodeTwo = "node2";
+      const hashNodeThree = "node3";
+      const hashNodeFour = "node4";
+
+      const treeAsArray: string[][] = [
+        [hashRoot, hashNodeOne, hashNodeTwo],
+        [hashNodeOne, hashNodeThree],
+        [hashNodeThree, hashNodeFour]
+      ];
+
+      const tx1 = await root.mintTree(signer.address, treeAsArray);
+      await tx1.wait();  
+
+      //TODO: change main root to l1Root to distinguish from tree roots
+      const rootId = await root.getNodeIdForHash(hashRoot);
+      const nodeOneId = await root.getNodeIdForHash(hashNodeOne);
+      const nodeTwoId = await root.getNodeIdForHash(hashNodeTwo);
+      const nodeThreeId = await root.getNodeIdForHash(hashNodeThree);
+      const nodeFourId = await root.getNodeIdForHash(hashNodeFour);
+
+      const rootDescendants = await root.getDescendants(rootId);
+      const nodeOneDescendants = await root.getDescendants(nodeOneId);
+      const nodeTwoDescendants = await root.getDescendants(nodeTwoId);
+      const nodeThreeDescendants = await root.getDescendants(nodeThreeId);
+      const nodeFourDescendants = await root.getDescendants(nodeFourId);
+
+      // console.log("Root id", rootId.toNumber());
+
+      // BigNumber from ethers does not have correctly implemented Array.prototype.includes() nor Array.prototype.indexOf():
+      expect(rootDescendants.length).to.eq(2);
+      expect(rootDescendants.findIndex(el => el.toNumber() === nodeOneId.toNumber())).to.gt(-1);  // if not found in findIndex(..) than return value == -1 
+      expect(rootDescendants.findIndex(el => el.toNumber() === nodeTwoId.toNumber())).to.gt(-1);
+      expect(nodeOneDescendants.length).to.eq(1);
+      expect(nodeOneDescendants.findIndex(el => el.toNumber() === nodeThreeId.toNumber())).to.gt(-1);
+      expect(nodeTwoDescendants.length).to.eq(0);
+      expect(nodeThreeDescendants.length).to.eq(1);
+      expect(nodeThreeDescendants.findIndex(el => el.toNumber() === nodeFourId.toNumber())).to.gt(-1);
+      expect(nodeFourDescendants.length).to.eq(0);
+
+      /**
+       * Tree:
+       *        r
+       *       / \
+       *      1   2
+       *     /  
+       *    3  
+       *   /
+       *  4
+       */
+    });
+
+    //TODO: test if tree constructed during on l2 when sending to l1 is correct - add function that will build a tree for rootId and return it
+    // than check this structure in test
 
     //TODO: test for many owners (users)
 
