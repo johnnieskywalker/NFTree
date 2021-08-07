@@ -87,7 +87,7 @@ describe("L1Root", () => {
       await tx1.wait()
       const rootId = await root.hashes(testHashRoot);   // switch to getNodeIdForHash, and make hashes private
       // const tx2 = await root.mintNode(testHashNodeOne, 1111);
-      const tx2 = await root.mintNode(testHashNodeOne, rootId);
+      const tx2 = await root.mintNode(testHashNodeOne, rootId, rootId);
       await tx2.wait()
 
       const nodeOneId = await root.hashes(testHashNodeOne);
@@ -115,19 +115,19 @@ describe("L1Root", () => {
       const rootId = await root.getNodeIdForHash(testHashRoot);
 
       // const tx1 = await root.mintNode(testHashNodeOne, rootId, rootId);
-      const tx1 = await root.mintNode(testHashNodeOne, rootId);
+      const tx1 = await root.mintNode(testHashNodeOne, rootId, rootId);
       await tx1.wait()
       const nodeOneId = await root.getNodeIdForHash(testHashNodeOne);  
       // const tx2 = await root.mintNode(testHashNodeTwo, rootId, rootId);
-      const tx2 = await root.mintNode(testHashNodeTwo, rootId);
+      const tx2 = await root.mintNode(testHashNodeTwo, rootId, rootId);
       await tx2.wait()
       const nodeTwoId = await root.getNodeIdForHash(testHashNodeTwo);  
       // const tx3 = await root.mintNode(testHashNodeThree, nodeOneId, rootId);
-      const tx3 = await root.mintNode(testHashNodeThree, nodeOneId);
+      const tx3 = await root.mintNode(testHashNodeThree, nodeOneId, rootId);
       await tx3.wait()
       const nodeThreeId = await root.getNodeIdForHash(testHashNodeThree);  
       // const tx4 = await root.mintNode(testHashNodeFour, nodeThreeId, rootId);
-      const tx4 = await root.mintNode(testHashNodeFour, nodeThreeId);
+      const tx4 = await root.mintNode(testHashNodeFour, nodeThreeId, rootId);
       await tx4.wait()
       const nodeFourId = await root.getNodeIdForHash(testHashNodeFour);  
 
@@ -204,14 +204,38 @@ describe("L1Root", () => {
 
       /**
        * Tree:
-       *        r
+       *        1
        *       / \
-       *      1   2
+       *      2   3
        *     /  
-       *    3  
+       *    4  
        *   /
-       *  4
+       *  5
        */
+    });
+
+    it("should return correctly build tree from contract ", async () => {
+      const hashRoot = "root1";
+      const hashNodeOne = "node1";
+      const hashNodeTwo = "node2";
+      const hashNodeThree = "node3";
+      const hashNodeFour = "node4";
+
+      const treeAsArray: string[][] = [
+        [hashRoot, hashNodeOne, hashNodeTwo],
+        [hashNodeOne, hashNodeThree],
+        [hashNodeThree, hashNodeFour]
+      ];
+
+      const tx1 = await root.mintTree(signer.address, treeAsArray);
+      await tx1.wait();  
+
+      const rootId = await root.getNodeIdForHash(hashRoot);
+      const recreatedTree = await root.buildTreeForExport(rootId);
+
+      console.log("recreated tree size: ", recreatedTree.length);
+      console.log("recreated tree: ", recreatedTree);
+
     });
 
     //TODO: test if tree constructed during on l2 when sending to l1 is correct - add function that will build a tree for rootId and return it

@@ -30,7 +30,7 @@ contract L1Root is ERC721, BaseRoot, IL1Minter {
         // tree[0][0] is root and its alredy minted above
         string memory ancestorHash = tree[i][0]; // frist element in each row is the parent node, and follwing elements in the row as his descendants (adjecency list graph representaion)
         uint256 ancestorNodeId = hashes[ancestorHash];
-        mintNode(tree[i][j], ancestorNodeId);
+        mintNode(tree[i][j], ancestorNodeId, rootId);
       }    
     }
   }
