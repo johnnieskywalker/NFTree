@@ -22,6 +22,7 @@ abstract contract BaseRoot is ERC721 {
   mapping (uint256 => uint256[]) private tree;
   // unique nft hashes to nodeId map
   mapping(string => uint256) public hashes;
+  mapping(uint256 => string) public hashesByNodeId;
 
   function mintRoot(string memory hash, address owner) public returns (uint256) {
     require(hashes[hash] != 1, "Can not use the same hash (Root check)");
@@ -29,6 +30,7 @@ abstract contract BaseRoot is ERC721 {
     nodesIds.increment();
     uint256 newRootId = nodesIds.current();
     hashes[hash] = newRootId;
+    hashesByNodeId[newRootId] = hash;
     nodesInTreeByRoot[newRootId].push(newRootId);
 
     roots.push(newRootId);
@@ -58,6 +60,7 @@ abstract contract BaseRoot is ERC721 {
     nodesIds.increment();
     uint256 newNodeId = nodesIds.current();
     hashes[hash] = newNodeId;
+    hashesByNodeId[newNodeId] = hash;
     // console.log(rootId);
     nodesInTreeByRoot[rootId].push(newNodeId);
 
@@ -69,38 +72,55 @@ abstract contract BaseRoot is ERC721 {
     return newNodeId;
   }
 
-  // TODO remove comment if the code works
-  /* 
-    Dynamic arrays must have a fixed size during creation, in our case second first dimension that needs to specified is number of descendants for node
-    in this naive implementation we use total number of nodes in the tree as the worst case. 
-    Optimal would be to calculate the longest path in the tree and use this value.
-   */
-  function buildTreeForExport(uint256 rootId) public view returns(uint256[][] memory) {
-    //TODO: try to remove the open brackets
-    uint256[] memory nodesByRoot = nodesInTreeByRoot[rootId];
-    // uint treeSize = (nodesInTreeByRoot[rootId]).length * 2;   // max len when tree is a list (each node has one descendant)
-    uint treeSize = nodesByRoot.length * 2;   // max len when tree is a list (each node has one descendant)
-    uint256[][] memory treeArray = new uint256[][](treeSize);
+  function buildTreeForExportWithNodeId(uint256 rootId) public view returns(uint256[][] memory) {
+    uint treeSize = arraySizeForTree(rootId);
+    uint256[][] memory resultTreeArray = new uint256[][](treeSize);
 
-    //TODO: optimize code check if nodeTree new array can be replaced with tree[nodeId]
     uint j = 0;
-    for(uint i = 0; i < nodesByRoot.length; i++) {
-      uint256 nodeId = nodesByRoot[i];
+    for(uint i = 0; i < nodesInTreeByRoot[rootId].length; i++) {
+      uint256 nodeId = nodesInTreeByRoot[rootId][i];
       if(tree[nodeId].length > 0) {
-        uint256[] memory nodeTree = tree[nodeId]; 
-        uint256[] memory nodeArrayTree = new uint256[](nodeTree.length + 1);
-        // treeArray[j][0] = nodeId;
+        uint256[] memory nodeArrayTree = new uint256[](tree[nodeId].length + 1);
         nodeArrayTree[0] = nodeId;
-        for(uint k = 0; k < nodeTree.length; k++) {
-          nodeArrayTree[k + 1] = nodeTree[k];    
+        for(uint k = 0; k < tree[nodeId].length; k++) {
+          nodeArrayTree[k + 1] = tree[nodeId][k];    
         }
-        // treeArray[j] = tree[nodeId];
-        treeArray[j] = nodeArrayTree;
+        resultTreeArray[j] = nodeArrayTree;
         j++;
       }
     }
 
-    return treeArray;
+    return resultTreeArray;
+  }
+
+  function buildTreeForExportWithHash(uint256 rootId) public view returns(string[][] memory) {
+    uint treeSize = arraySizeForTree(rootId);
+    string[][] memory resultTreeArray = new string[][](treeSize);
+
+    uint j = 0;
+    for(uint i = 0; i < nodesInTreeByRoot[rootId].length; i++) {
+      uint256 nodeId = nodesInTreeByRoot[rootId][i];
+      if(tree[nodeId].length > 0) {
+        string[] memory nodeArrayTree = new string[](tree[nodeId].length + 1);
+        nodeArrayTree[0] = hashesByNodeId[nodeId];
+        for(uint k = 0; k < tree[nodeId].length; k++) {
+          nodeArrayTree[k + 1] = hashesByNodeId[tree[nodeId][k]];    
+        }
+        resultTreeArray[j] = nodeArrayTree;
+        j++;
+      }
+    }
+
+    return resultTreeArray;
+  }
+
+  function arraySizeForTree(uint256 rootId) private view returns(uint) {
+    uint size = 0;
+    for(uint i = 0; i < nodesInTreeByRoot[rootId].length; i++) {
+      uint256 nodeId = nodesInTreeByRoot[rootId][i];
+      if(tree[nodeId].length > 0) size++;
+    }
+    return size;
   }
 
   function getDescendants(uint256 nodeId) public view returns(uint256[] memory) {

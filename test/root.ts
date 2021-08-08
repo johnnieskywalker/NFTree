@@ -8,6 +8,7 @@ import {L1Root } from "../typechain/L1Root"
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 import delay = require("delay");
+import { BigNumber } from "ethers";
 
 // const assertArrays = require('chai-arrays');  -- TODO: ask Johnny why thus import does not work ?
 // chai.use(assertArrays);
@@ -149,13 +150,13 @@ describe("L1Root", () => {
       expect(nodeFourDescendants.length).to.eq(0);
       /**
        * Tree:
-       *        r
+       *        1(r)
        *       / \
-       *      1   2
+       *      2   3
        *     /  
-       *    3  
+       *    4  
        *   /
-       *  4
+       *  5
        */
     });
 
@@ -204,7 +205,7 @@ describe("L1Root", () => {
 
       /**
        * Tree:
-       *        1
+       *        1(r)
        *       / \
        *      2   3
        *     /  
@@ -231,11 +232,17 @@ describe("L1Root", () => {
       await tx1.wait();  
 
       const rootId = await root.getNodeIdForHash(hashRoot);
-      const recreatedTree = await root.buildTreeForExport(rootId);
+      const recreatedTreeAsBigNum = await root.buildTreeForExportWithNodeId(rootId);
+      const recreatedTreeAsNumbers = recreatedTreeAsBigNum.map(bigNumInnerArray => bigNumInnerArray.map(e => e.toNumber()));
+      const recreatedTreeAsHashes = (await root.buildTreeForExportWithHash(rootId)).reduce(   // reduce not needed after changes in contract but left for reference
+        (acc, val) => { if(val.length > 0) acc.push(val); return acc;},
+         new Array<Array<string>>()
+      );
+      console.log("recreated tree size: ", recreatedTreeAsNumbers.length);
+      console.log("recreated tree as nodeIds: ", recreatedTreeAsNumbers);
+      console.log("recreated tree as hashes: ", recreatedTreeAsHashes);
 
-      console.log("recreated tree size: ", recreatedTree.length);
-      console.log("recreated tree: ", recreatedTree);
-
+      expect(JSON.stringify(treeAsArray)).to.eq(JSON.stringify(recreatedTreeAsHashes));
     });
 
     //TODO: test if tree constructed during on l2 when sending to l1 is correct - add function that will build a tree for rootId and return it
