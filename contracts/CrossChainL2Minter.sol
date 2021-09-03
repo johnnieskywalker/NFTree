@@ -33,8 +33,8 @@ abstract contract CrossChainL2Minter is OVM_CrossDomainEnabled {
     // Send calldata into L2
     sendCrossDomainMessage(
       l1Minter,
-      data,
-      DEFAULT_MINT_L1_GAS
+      DEFAULT_MINT_L1_GAS,
+      data
     );
   }
 

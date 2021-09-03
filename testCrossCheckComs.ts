@@ -1,16 +1,10 @@
 // import  ethers from 'ethers';
 
-// import { Watcher }  from '@eth-optimism/watcher';
-// import { getContractFactory } from '@eth-optimism/contracts';
-
 // import {L1Root} from "./typechain/L1Root"
 // import {L2Root} from "./typechain/L2Root"
 
-// const { Watcher } = require('@eth-optimism/watcher')
-// const { getContractFactory } = require('@eth-optimism/contracts')
-
 const ethers = require('ethers')
-const { Watcher } = require('@eth-optimism/watcher')
+const Watcher = require('@eth-optimism/core-utils').Watcher
 const { getContractFactory } = require('@eth-optimism/contracts')
 
 // Set up some contract factories. You can ignore this stuff.
@@ -23,7 +17,7 @@ const factoryL2Root = factory('L2Root', true);
 // const factory__L1_ERC20Gateway = getContractFactory('OVM_L1ERC20Gateway')
 
 
-async function main() {
+async function main_old() {
   // Set up our RPC provider connections.
   const l1RpcProvider = new ethers.providers.JsonRpcProvider('http://localhost:9545')
   const l2RpcProvider = new ethers.providers.JsonRpcProvider('http://localhost:8545')
@@ -85,7 +79,7 @@ async function main() {
 
 }
 
-async function main_new() {
+async function main() {
   // Set up our RPC provider connections.
   const l1RpcProvider = new ethers.providers.JsonRpcProvider('http://localhost:9545')
   const l2RpcProvider = new ethers.providers.JsonRpcProvider('http://localhost:8545')
@@ -162,6 +156,10 @@ async function main_new() {
   console.log("Check if L1 was successfully called")
   const wasMintTreeCalled = await l1Root.wasMintTreeCalled();
   console.log("Was L1 called = ", wasMintTreeCalled);
+
+  console.log("Check minted tree")
+  const recreatedTreeAsHashes = await l1Root.buildTreeForExportWithHash(rootId);
+  console.log("recreated tree as hashes: ", recreatedTreeAsHashes);
 
 }
 
