@@ -20,4 +20,9 @@ contract L2Root is ERC721, BaseRoot, CrossChainL2Minter {
     mintOnL1(l1Owner, testArray);
   }
 
+  function crossChainMint(address l1Owner, uint256 rootId) public {
+    string[][] memory exportTree = buildTreeForExportWithHash(rootId);
+    mintOnL1(l1Owner, exportTree);
+  }
+
 }

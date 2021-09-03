@@ -22,7 +22,7 @@ abstract contract CrossChainL2Minter is OVM_CrossDomainEnabled {
     l1Minter = _l1Minter;        
   }
 
-  function mintOnL1(address l1Owner, string[][] storage tree) internal {
+  function mintOnL1(address l1Owner, string[][] memory tree) internal {
     
     bytes memory data = abi.encodeWithSelector(
       IL1Minter.mintTree.selector,
