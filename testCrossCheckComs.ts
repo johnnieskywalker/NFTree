@@ -79,7 +79,7 @@ async function main_old() {
 
 }
 
-async function main() {
+async function main_new() {
   // Set up our RPC provider connections.
   const l1RpcProvider = new ethers.providers.JsonRpcProvider('http://localhost:9545')
   const l2RpcProvider = new ethers.providers.JsonRpcProvider('http://localhost:8545')
@@ -111,9 +111,11 @@ async function main() {
   // const contractFactory = await ethers.getContractFactory("Root", signer);
 
   console.log("Deploy L1Root");
-  const l1Root = await factoryL1Root.connect(l1Wallet).deploy({
-    gasPrice: 0
-  });
+  const l1Root = await factoryL1Root.connect(l1Wallet).deploy(
+    l2Wallet.address,  // this is not used (could be any address) in the example we only send data from L2 -> L1
+    l1MessengerAddress,
+    {gasPrice: 0}
+    );
   await l1Root.deployTransaction.wait();
 
   console.log("Deploy L2Root");
@@ -163,7 +165,7 @@ async function main() {
 
 }
 
-main()
+main_new()
   .then(() => process.exit(0))
   .catch(error => {
     console.error(error)

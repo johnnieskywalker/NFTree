@@ -5,7 +5,7 @@ pragma experimental ABIEncoderV2;
 /* Library Imports */
 import { OVM_CrossDomainEnabled } from "@eth-optimism/contracts/libraries/bridge/OVM_CrossDomainEnabled.sol";
 
-import { IL1Minter } from "./IL1Minter.sol";
+import { ITreeMinter } from "./ITreeMinter.sol";
 
 abstract contract CrossChainL2Minter is OVM_CrossDomainEnabled {
 
@@ -25,7 +25,7 @@ abstract contract CrossChainL2Minter is OVM_CrossDomainEnabled {
   function mintOnL1(address l1Owner, string[][] memory tree) internal {
     
     bytes memory data = abi.encodeWithSelector(
-      IL1Minter.mintTree.selector,
+      ITreeMinter.mintTree.selector,
       l1Owner,
       tree
     );

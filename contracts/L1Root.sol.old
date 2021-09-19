@@ -7,9 +7,9 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 // import { BaseRoot } from "./BaseRoot.sol";
-import { IL1Minter } from "./IL1Minter.sol";
+import { ITreeMinter } from "./ITreeMinter.sol";
 
-// contract L1Root is BaseRoot, IL1Minter {
+// contract L1Root is BaseRoot, ITreeMinter {
 contract L1Root is ERC721 {
 
   // constructor() BaseRoot() {}

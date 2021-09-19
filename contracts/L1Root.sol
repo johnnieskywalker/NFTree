@@ -5,19 +5,21 @@ import "hardhat/console.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 import { BaseRoot } from "./BaseRoot.sol";
-import { IL1Minter } from "./IL1Minter.sol";
+import { ITreeMinter } from "./ITreeMinter.sol";
+import { CrossChainL1Minter } from "./CrossChainL1Minter.sol";
 
-// TODO: afrter tests L1Root should not implement IL1Minter 
-contract L1Root is ERC721, BaseRoot, IL1Minter {
+// TODO: afrter tests L1Root should not implement ITreeMinter 
+contract L1Root is ERC721, BaseRoot, ITreeMinter, CrossChainL1Minter {
 
   //TODO: this values are trash
   uint8 public wasMintTreeCalled;
   address public ownerIncomingValue;
 
-  constructor() ERC721("Root", "RT") {}  
+  //TODO: contract name mustbe L1Root
+  constructor(address _l2Minter, address _l1messenger) ERC721("L1Root", "RT") CrossChainL1Minter(_l2Minter, _l1messenger) {}  
 
   //TODO for test purspose remove in final implementation
-  function mintTree(address owner, string[][] memory newTree) external override(BaseRoot, IL1Minter)  {
+  function mintTree(address owner, string[][] memory newTree) external override(BaseRoot, ITreeMinter)  {
     wasMintTreeCalled = 1;   
     ownerIncomingValue = owner; 
 
@@ -35,6 +37,37 @@ contract L1Root is ERC721, BaseRoot, IL1Minter {
         mintNode(newTree[i][j], ancestorNodeId, rootId);
       }    
     }
+  }
+
+  string[][]  testArray;
+  function testCrossChainMint(address l2Owner) public {
+    testArray.push(["root", "node1", "node2"]);
+    testArray.push(["node1", "node3"]);
+
+    mintOnL2(l2Owner, testArray);
+  }
+
+  function crossChainMint(address l2Owner, uint256 rootId) public {
+    string[][] memory exportTree = buildTreeForExportWithHash(rootId);
+    mintOnL2(l2Owner, exportTree);
+  }
+
+  string public transferedStringData;
+  function crossChainStringTransfer(address owner, string memory data) external override {
+    require(0 > 1, "Not implemeted");  
+  }
+
+  function testStringTransfer(address l2Owner, string memory strData) public {
+    sendString(l2Owner, strData);
+  }
+
+  string[][] public transferedStringArrayData;
+  function crossChainStringArrayTransfer(address owner, string[][] memory data) external override {
+    require(0 > 1, "Not implemeted");  
+  }
+  
+  function testStringArrayTransfer(address l2Owner, string[][] memory strArrData) public {
+    sendStringArray(l2Owner, strArrData);
   }
 
 }
