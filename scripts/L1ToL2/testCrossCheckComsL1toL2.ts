@@ -18,7 +18,7 @@ const factoryL1Root = factory('L1Root');
 const factoryL2Root = factory('L2Root', true);
 // const factory__L1_ERC20Gateway = getContractFactory('OVM_L1ERC20Gateway')
 
-async function main_new() {
+async function main() {
   // Set up our RPC provider connections.
   const l1RpcProvider = new ethers.providers.JsonRpcProvider('http://localhost:9545')
   const l2RpcProvider = new ethers.providers.JsonRpcProvider('http://localhost:8545')
@@ -62,7 +62,7 @@ async function main_new() {
   const l2Root = await factoryL2Root.connect(l2Wallet).deploy(
     l2Wallet.address,  // this is not used (could be any address) in the example we only send data from L1 -> L2
     l2MessengerAddress,
-    { gasPrice: 0 }
+    // { gasPrice: 0 }
   );
   await l2Root.deployTransaction.wait();
 
@@ -70,7 +70,7 @@ async function main_new() {
   const l1Root = await factoryL1Root.connect(l1Wallet).deploy(
     l2Root.address,
     l1MessengerAddress,
-    { gasPrice: 0 }
+    // { gasPrice: 0 }
   );
   await l1Root.deployTransaction.wait();
 
@@ -93,13 +93,12 @@ async function main_new() {
   const txMintTree = await l1Root.mintTree(l1Wallet.address, treeAsArray);
   await txMintTree.wait();  
 
-  // console.log("Call mint from L1 -> L2");
+  console.log("Call mint from L1 -> L2");
   const rootId = await l1Root.getNodeIdForHash(hashRoot);
-  // const txMint = await l1Root.crossChainMint(l2Wallet.address, rootId, {
-  // // const txMint = await l1Root.testCrossChainMint(l2Wallet.address, {
-  //   gasPrice: 0  // 1234
-  // });
-  // await txMint.wait();
+  const txMint = await l1Root.crossChainMint(l2Wallet.address, rootId, 
+    // { gasPrice: 0  }
+  );
+  await txMint.wait();
 
   // console.log("Call test mint from L1 -> L2");
   // const txMint = await l1Root.testCrossChainMint(l2Wallet.address);
@@ -109,9 +108,9 @@ async function main_new() {
   // const txMint = await l1Root.testStringTransfer(l2Wallet.address, "gw");
   // await txMint.wait();
 
-  console.log("Call string array transfer from L1 -> L2");
-  const txMint = await l1Root.testStringArrayTransfer(l2Wallet.address, treeAsArray);
-  await txMint.wait();
+  // console.log("Call string array transfer from L1 -> L2");
+  // const txMint = await l1Root.testStringArrayTransfer(l2Wallet.address, treeAsArray);
+  // await txMint.wait();
 
   // Wait for the message to be relayed to L2
   console.log("Waiting for message to be relayed to L2...")
@@ -122,13 +121,16 @@ async function main_new() {
   // const stringSent = await l2Root.getTransferredStringData();
   // console.log("Transferred string = ", stringSent);
 
+  const argsToMint = await l2Root.getArgsForMintNode();
+  console.log("Args to mint array = ", argsToMint);
+  
   console.log("Check if L2 string array transfer for successful");
   const stringArraySent = await l2Root.getTransferredStringArrayData();
   console.log("Transferred string = ", stringArraySent);
 
   console.log("Check if L2 was successfully called")
   const wasMintTreeCalled = await l2Root.wasMintTreeCalled();
-  console.log("Was L2 called = ", wasMintTreeCalled);
+  console.log("Was L2 called = ", wasMintTreeCalled.toNumber());
 
   console.log("Check minted tree")
   const recreatedTreeAsHashes = await l2Root.buildTreeForExportWithHash(rootId);
@@ -136,7 +138,7 @@ async function main_new() {
 
 }
 
-main_new()
+main()
   .then(() => process.exit(0))
   .catch(error => {
     console.error(error)

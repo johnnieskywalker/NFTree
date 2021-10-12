@@ -65,7 +65,8 @@ abstract contract BaseRoot is ERC721 {
     nodesInTreeByRoot[rootId].push(newNodeId);
 
     nodeOwner[newNodeId] = msg.sender;
-    tree[ancestorNodeId].push(newNodeId);
+    tree[ancestorNodeId].push(newNodeId); // tu sie L2 zawiesza
+    // tree[111].push(newNodeId);
 
     _mint(msg.sender, newNodeId);   // if will work on L2, change to _safeMint() - recommened method
     _setTokenURI(newNodeId, hash);
@@ -73,22 +74,22 @@ abstract contract BaseRoot is ERC721 {
   }
 
   //TODO: it was quick copy to check
-  function mintTree(address owner, string[][] memory newTree) virtual external {
-    // TODO: add check that only Root address from L2 can send messages to this function (otherwise random people will mint whole trees)
-    require(newTree.length > 1 && newTree[0].length > 1, "Tree for import must not be empty and must containt more than just a root");
+  // function mintTree(address owner, string[][] memory newTree) virtual external {
+  //   // TODO: add check that only Root address from L2 can send messages to this function (otherwise random people will mint whole trees)
+  //   require(newTree.length > 1 && newTree[0].length > 1, "Tree for import must not be empty and must containt more than just a root");
 
-    string memory rootHash = newTree[0][0];
-    uint256 rootId = mintRoot(rootHash, owner);
+  //   string memory rootHash = newTree[0][0];
+  //   uint256 rootId = mintRoot(rootHash, owner);
 
-    for(uint i = 0; i < newTree.length; i++) {
-      for(uint j = 1; j < newTree[i].length; j++) {
-        // tree[0][0] is root and its alredy minted above
-        string memory ancestorHash = newTree[i][0]; // frist element in each row is the parent node, and follwing elements in the row as his descendants (adjecency list graph representaion)
-        uint256 ancestorNodeId = hashes[ancestorHash];
-        mintNode(newTree[i][j], ancestorNodeId, rootId);
-      }    
-    }
-  }
+  //   for(uint i = 0; i < newTree.length; i++) {
+  //     for(uint j = 1; j < newTree[i].length; j++) {
+  //       // tree[0][0] is root and its alredy minted above
+  //       string memory ancestorHash = newTree[i][0]; // frist element in each row is the parent node, and follwing elements in the row as his descendants (adjecency list graph representaion)
+  //       uint256 ancestorNodeId = hashes[ancestorHash];
+  //       mintNode(newTree[i][j], ancestorNodeId, rootId);
+  //     }    
+  //   }
+  // }
 
   function buildTreeForExportWithNodeId(uint256 rootId) public view returns(uint256[][] memory) {
     uint treeSize = arraySizeForTree(rootId);

@@ -19,7 +19,8 @@ contract L1Root is ERC721, BaseRoot, ITreeMinter, CrossChainL1Minter {
   constructor(address _l2Minter, address _l1messenger) ERC721("L1Root", "RT") CrossChainL1Minter(_l2Minter, _l1messenger) {}  
 
   //TODO for test purspose remove in final implementation
-  function mintTree(address owner, string[][] memory newTree) external override(BaseRoot, ITreeMinter)  {
+  // function mintTree(address owner, string[][] memory newTree) external override(BaseRoot, ITreeMinter)  {
+  function mintTree(address owner, string[][] memory newTree) external override(ITreeMinter)  {
     wasMintTreeCalled = 1;   
     ownerIncomingValue = owner; 
 
@@ -68,6 +69,14 @@ contract L1Root is ERC721, BaseRoot, ITreeMinter, CrossChainL1Minter {
   
   function testStringArrayTransfer(address l2Owner, string[][] memory strArrData) public {
     sendStringArray(l2Owner, strArrData);
+  }
+
+  
+  uint256[] public argsForMintNode;
+  function getCheckUintArray() public returns(uint256[] memory) {
+    // argsForMintNode[0] = 1; // fails with invalid opcode // TODO: read more about arrays to understand why
+    argsForMintNode.push(1);   // work
+    return argsForMintNode;
   }
 
 }

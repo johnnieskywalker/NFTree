@@ -2,9 +2,9 @@ import { ethers } from "hardhat";
 import chai from "chai";
 import { solidity } from "ethereum-waffle";
 
-// import {L2Root as Root} from "../typechain-ovm/L2Root"
-// import {L1Root as Root} from "../typechain/L1Root"
-import {L1Root } from "../typechain/L1Root"
+
+import {L2Root } from "../../typechain/L2Root"
+import {L1Root } from "../../typechain/L1Root"
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 import delay = require("delay");
@@ -17,8 +17,8 @@ chai.use(solidity);     //TODO: ask Johnny how it works
 const {expect} = chai;  //TODO: ask Johnny how it works
 
 
-describe("L1Root", () => {
-  let root: L1Root;
+describe("L2Root", () => {
+  let root: L2Root;
   let signer: SignerWithAddress
 
   const l1MessengerAddressMock = '0x6660000000000000000000000000000000000007'
@@ -27,7 +27,7 @@ describe("L1Root", () => {
   beforeEach(async () => {
     const signers = await ethers.getSigners();    
     signer = signers[0];
-    const contractFactory = await ethers.getContractFactory("L1Root", signer);
+    const contractFactory = await ethers.getContractFactory("L2Root", signer);
 
     root = (await contractFactory.deploy(
       l1MessengerAddressMock,
@@ -36,7 +36,7 @@ describe("L1Root", () => {
       //   gasPrice: ethers.BigNumber.from('0'),  // TODO : not sure if necessary but was used in on other L2 example
       //   gasLimit: 8999999,                     // same as above
       // }
-    )) as L1Root;
+    )) as L2Root;
 
     await root.deployTransaction.wait();
     const rootCount = await root.getRootCount();
@@ -252,10 +252,10 @@ describe("L1Root", () => {
       expect(JSON.stringify(treeAsArray)).to.eq(JSON.stringify(recreatedTreeAsHashes));
     });
 
-    it("should not fail while setting up elements in uint array by direct reference []", async () => {
-      const tx = await root.getCheckUintArray()
-      await tx.wait();
-    });
+    // it("should not fail while setting up elements in uint array by direct reference []", async () => {
+    //   const tx = await root.getCheckUintArray()
+    //   await tx.wait();
+    // });
 
     //TODO: test if tree constructed during on l2 when sending to l1 is correct - add function that will build a tree for rootId and return it
     // than check this structure in test
