@@ -62,6 +62,11 @@ contract L2Root is ERC721, BaseRoot, ITreeMinter, CrossChainL2Minter  {
     
   }
 
+  function crossChainMint(address l1Owner, uint256 rootId) public {
+    string[][] memory exportTree = buildTreeForExportWithHash(rootId);
+    mintOnL1(l1Owner, exportTree);
+  }
+
   string public transferredStringData;
   function crossChainStringTransfer(address owner, string memory data) external override {
     // require(0 > 1, "Not implemeted");  

@@ -66,7 +66,8 @@ abstract contract BaseRoot is ERC721 {
 
     nodeOwner[newNodeId] = msg.sender;
     tree[ancestorNodeId].push(newNodeId); // tu sie L2 zawiesza
-    // tree[111].push(newNodeId);
+    // tree[1].push(newNodeId); // tu sie L2 dziala  // czy element 1 jest dodany prawidlowo ? = TRUE
+    // tree[111].push(newNodeId); -- to nie zadziala bo odwoluje sie do elementu 111 kotrego na pewno nie ma w globalnej tablicy tree
 
     _mint(msg.sender, newNodeId);   // if will work on L2, change to _safeMint() - recommened method
     _setTokenURI(newNodeId, hash);
